@@ -4,6 +4,12 @@ import tensorflow as tf
 import Data
 import ConditionalGAN
 
+
+"""
+Source:https://github.com/constfilin/ConditionalGAN
+"""
+
+
 flags = tf.app.flags
 flags.DEFINE_string ("operation"          , "test"          , "what are we going to be doing - train, test")
 flags.DEFINE_string ("data"               , "mnist"         , "data we are working with - mnist, celebA, wines")
@@ -34,7 +40,7 @@ def append_to_paths(name,*paths):
 def make_paths(*paths):
     for p in paths:
         if not os.path.exists(p):
-            os.makedirs(p);
+            os.makedirs(p)
     return paths
 
 def main(_):
@@ -53,7 +59,7 @@ def main(_):
     elif flags.FLAGS.data=="wines":
         data = Data.Wines(data_path)
     else:
-        raise ValueError("Data %s is not supported" % (flags.FLAGS.data))
+        raise ValueError("Data %s is not supported" % flags.FLAGS.data)
 
     if flags.FLAGS.operation == "train":
         cgan = ConditionalGAN.ConditionalGAN(data,flags.FLAGS.batch_size,flags.FLAGS.z_dim,True)
@@ -69,7 +75,8 @@ def main(_):
         print("\n".join(data.describe_labels(labels)))
         cgan.test(model_path,sample_path,None,labels)
     else:
-        print("Unknown operation %s" % (flags.FLAGS.operation))
+        print("Unknown operation %s" % flags.FLAGS.operation)
+
 
 if __name__ == '__main__':
     tf.app.run()

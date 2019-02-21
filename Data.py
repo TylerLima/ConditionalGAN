@@ -20,7 +20,7 @@ class Data(object):
 
     def get_batch(self,step,batch_size):
         # The case when the length of data is less than the batch size is 
-        # so unique that does not make sense to try to gneralize the code
+        # so unique that does not make sense to try to generalize the code
         if batch_size>len(self.data):
             data   = self.data
             labels = self.labels
@@ -36,7 +36,7 @@ class Data(object):
         ro_num = (len(self.data)//batch_size) - 1
         if step % ro_num == 0:
             # Shuffle the data
-            seed = int(time.time()*1000) % ((2**32)-1);
+            seed = int(time.time()*1000) % ((2**32)-1)
             np.random.seed(seed)
             np.random.shuffle(self.data)
             np.random.seed(seed)
@@ -55,41 +55,41 @@ class Data(object):
                 ndx = np.random.randint(0,shape[1])
                 result[i,ndx] = 1.
             else:
-                result[i] = np.random.choice([0.,1.],size=shape[1])
+                result[i] = np.random.choice([0., 1.], size=shape[1])
         return result
 
-    def get_labels_by_spec(self,shape,spec):
-        result = np.zeros(shape,dtype=np.float)
+    def get_labels_by_spec(self, shape, spec):
+        result = np.zeros(shape, dtype=np.float)
         labels = spec.split(",")
-        for i in range(0,shape[0]):
+        for i in range(0, shape[0]):
             for l in labels:
-                result[i,self.attribs.index(l)] = 1.
+                result[i, self.attribs.index(l)] = 1.
         return result
         
-    def describe_labels(self,labels):
+    def describe_labels(self, labels):
         result = []
-        for i in range(0,len(labels)):
+        for i in range(0, len(labels)):
             tmp = []
-            for j in range(0,len(labels[i])):
-                if labels[i,j]:
+            for j in range(0, len(labels[i])):
+                if labels[i, j]:
                     tmp.append(self.attribs[j])
-            result.append("%i: %s" % (i,",".join(tmp)))
+            result.append("%i: %s" % (i, ",".join(tmp)))
         return result
 
 class Mnist(Data):
 
-    def __init__(self,data_path):
+    def __init__(self, data_path):
         super(Mnist,self).__init__(
             "mnist",
-            ["0","1","2","3","4","5","6","7","8","9"],
-            *self.load(data_path,[28,28,1]),
+            ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            *self.load(data_path, [28, 28, 1]),
             True)
 
     @staticmethod
     def load(data_path,shape):
 
-        trX,trY = Mnist.load_from_files(os.path.join(data_path,'train-images-idx3-ubyte'),os.path.join(data_path,'train-labels-idx1-ubyte'),shape)
-        teX,teY = Mnist.load_from_files(os.path.join(data_path,'t10k-images-idx3-ubyte'),os.path.join(data_path, 't10k-labels-idx1-ubyte'),shape)
+        trX, trY = Mnist.load_from_files(os.path.join(data_path,'train-images-idx3-ubyte'),os.path.join(data_path,'train-labels-idx1-ubyte'),shape)
+        teX, teY = Mnist.load_from_files(os.path.join(data_path,'t10k-images-idx3-ubyte'),os.path.join(data_path, 't10k-labels-idx1-ubyte'),shape)
 
         X = np.concatenate((trX,teX),axis=0)
         y = np.concatenate((trY,teY),axis=0)
@@ -102,20 +102,20 @@ class Mnist(Data):
 
         # Convert labels to one-hot. The constant 10 in this case comes from the number of
         # different labels in the data set. In case of MNIST there are 10 digits and 10 labels
-        labels = np.zeros((len(y),10),dtype=np.float)
-        for i,label in enumerate(y):
-            labels[i,int(label)] = 1.0
+        labels = np.zeros((len(y), 10), dtype=np.float)
+        for i, label in enumerate(y):
+            labels[i, int(label)] = 1.0
 
         # Normalize the images vector
-        return np.array(X/255.),labels
+        return np.array(X/255.), labels
 
     @staticmethod
-    def load_from_files(data_file,labels_file,shape):
-        loaded = np.fromfile(data_file,dtype=np.uint8)
-        data   = np.asarray(loaded[16:].reshape((-1,*shape)).astype(np.float))
+    def load_from_files(data_file, labels_file,shape):
+        loaded = np.fromfile(data_file, dtype=np.uint8)
+        data   = np.asarray(loaded[16:].reshape((-1, *shape)).astype(np.float))
         loaded = np.fromfile(labels_file,dtype=np.uint8)
         labels = np.asarray(loaded[8:].reshape((data.shape[0])).astype(np.float))
-        return data,labels
+        return data, labels
 
 class ImagesInFolder(Data):
 

@@ -34,7 +34,6 @@ class ConditionalGAN(object):
     def __init__(self,data,batch_size,z_dim,is_training=False):
         self.data    = data
         self.images = tf.placeholder(tf.float32,[batch_size,*data.shape], name="images")
-        # TODO: figure out what significance the dimension z_dim has
         self.noise  = tf.placeholder(tf.float32,[batch_size,z_dim], name="noise")
         self.labels = tf.placeholder(tf.float32,[batch_size,data.get_number_of_labels()], name="labels")
         self.is_training = is_training
@@ -51,7 +50,7 @@ class ConditionalGAN(object):
         discriminator_fakes_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.zeros_like(self.fakes_discriminator[0]),logits=self.fakes_discriminator[1]))
         discriminator_reals_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like (self.reals_discriminator[0]),logits=self.reals_discriminator[1]))
         self.discriminator_loss  = tf.add(discriminator_reals_loss,discriminator_fakes_loss,name="discriminator_loss")
-        # Generator produces a loss when the discriminator successfuly recognizes generated images as fakes
+        # Generator produces a loss when the discriminator successfully recognizes generated images as fakes
         self.generator_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=tf.ones_like(self.fakes_discriminator[0]),logits=self.fakes_discriminator[1]),name="generator_loss")
 
         self.saver   = tf.train.Saver(max_to_keep=5)
@@ -84,7 +83,7 @@ class ConditionalGAN(object):
 
         with sess:
             summary_writer = tf.summary.FileWriter(log_path,graph=sess.graph)
-            start = time.time()-0.000001 # to avoid division by 0
+            start = time.time()-0.000001  # to avoid division by 0
             for step in range(last_saved_step,training_steps):
                 images,labels = self.data.get_batch(step,self.get_batch_size())
 
@@ -162,7 +161,7 @@ class ConditionalGAN(object):
             if count==0:
                 count = batch_size
                 
-        def get_input_batch( input, start, end ):
+        def get_input_batch( input, start, end):
             if len(input)<end:
                 return np.append(input[start:],np.zeros((end-len(input),input.shape[1]),dtype=input.dtype),axis=0)
             return input[start:end]
